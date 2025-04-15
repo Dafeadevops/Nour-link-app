@@ -1,0 +1,32 @@
+name: Sync to GitLab
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - staging
+
+jobs:
+  sync_to_gitlab:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code from GitHub
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "Dafeadevops"
+          git config --global user.email "a.daffe0201@gmail.com"
+
+      - name: Add GitLab remote
+        run: |
+          git remote add gitlab https://gitlab.com/Daffeadevops/Nour-link-app.git
+
+      - name: Push to GitLab
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          BRANCH=$(echo "${GITHUB_REF#refs/heads/}")
+          git push https://oauth2:${GITLAB_TOKEN}@gitlab.com/Daffeadevops/Nour-link-app.git $BRANCH
